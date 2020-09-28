@@ -18,10 +18,10 @@ class LoginViewController: UIViewController {
     
     //ログインボタンをタップした時に呼ばれるメソッド
     @IBAction func handleLoginButton(_ sender: Any) {
-        if let address = mailAdressTextField.text, let password = passwordTextField.text, let displayName = displayNameTextField.text{
+        if let address = mailAdressTextField.text, let password = passwordTextField.text{
             
             //アドレスとパスワードと表示名のいずれかでも入力されて無かったら何もしない
-            if address.isEmpty || password.isEmpty || displayName.isEmpty {
+            if address.isEmpty || password.isEmpty  {
                 SVProgressHUD.showError(withStatus:"必要項目を入力してください")
                 //print("DEBUG_PRITNT:中がから文字です")
                 return
@@ -29,7 +29,7 @@ class LoginViewController: UIViewController {
             //HUDで処理中を表示
             SVProgressHUD.show()
             //アドレスとパスワードでユーザー作成。ユーザー作成に成功すると、自動的にログイン
-            Auth.auth().createUser(withEmail: address, password: password){
+            Auth.auth().signIn(withEmail: address, password: password){
                 authReslut, error in
                 //クロージャ内の処理
                 if let error = error{
@@ -44,9 +44,6 @@ class LoginViewController: UIViewController {
                 
                 //画面を閉じてタブ画面に戻る
                 self.dismiss(animated: true, completion: nil)
-                print("DEBUG_PRINT:ユーザー作成に成功しました。")
-                
-                
             }
         }
         
@@ -64,10 +61,7 @@ class LoginViewController: UIViewController {
             }
             //HUDで処理中を表示
             SVProgressHUD.show()
-            
-            
-            
-            //アドレスとパスワードでユーザー作成。ユーザー作成に成功すると、自動的にログイン
+           //アドレスとパスワードでユーザー作成。ユーザー作成に成功すると、自動的にログイン
             Auth.auth().createUser(withEmail: address, password: password){
                 authReslut, error in
                 //クロージャ内の処理

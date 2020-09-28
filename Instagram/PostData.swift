@@ -20,12 +20,12 @@ class PostData: NSObject {
     
     init(document: QueryDocumentSnapshot){
         self.id = document.documentID
-        print(self.id)
+        
         let postDic = document.data()
         
         //抽象　as?　具体のダウンキャスト。失敗したらnil
         self.name = postDic["name"] as? String
-        print(self.name)
+        
         self.caption = postDic["caption"] as? String
         
         let timestamp = postDic["date"] as? Timestamp
@@ -35,10 +35,10 @@ class PostData: NSObject {
             self.comment = comment
             
         }
-        print(self.comment)
+        
         //likesというキーを設定しているposdDic配列の要素がString型の配列の要素にダウンキャストできる時、likesにpostDicのlikesというキーに設定されている要素をlikesという配列に入れる。
         if let likes = postDic["likes"] as? [String]{
-         
+            
             self.likes = likes
             
         }
@@ -51,5 +51,5 @@ class PostData: NSObject {
             }
         }
     }
-
+    
 }

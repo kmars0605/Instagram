@@ -125,7 +125,7 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
             //likesに更新データを書き込む
             let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
             postRef.updateData(["likes": updateValue])
-           
+            
         }
         
     }
@@ -141,8 +141,6 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
         // comment.captionLabel.text = "\(postData.name!):\(postData.caption!)"
         let commentViewController = self.storyboard?.instantiateViewController(identifier: "Comment") as! CommentViewController
         commentViewController.postData = postData
-        
-        
         
         //print(commentViewController.indexPath)
         self.present(commentViewController, animated: true, completion: nil)

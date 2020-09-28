@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseUI
+import Firebase
 
 class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var postImageView: UIImageView!
@@ -42,15 +43,21 @@ class PostTableViewCell: UITableViewCell {
         //キャプションの表示
         self.captionLabel.text = "\(postData.name!)　:　\(postData.caption!)"
         
-        
-        
-        for i in postData.comment {
-            self.commentLabel.text = "\(postData.name!)　:　\(postData.comment)\n"
+        //改行したものをテキストに入れる
+        if postData.comment != []{
+            var text = ""
+            //let name = Auth.auth().currentUser?.displayName
+            for i in 0...postData.comment.count - 1 {
+                let value = postData.comment[i]
+                text += "\(value)\n"
+                
+            }
+            
+            self.commentLabel.text = text
+        }else{
+            self.commentLabel.text = ""
         }
-        
-        
-        
-        
+       
         //日時の表示
         self.dateLabel.text = ""
         if let date = postData.date{

@@ -15,28 +15,16 @@ class CommentViewController: UIViewController {
     @IBOutlet weak var commentTextField: UITextField!
     @IBOutlet weak var captionLabel: UILabel!
     @IBAction func handlePostButton(_ sender: UIButton) {
-        /*let name = Auth.auth().currentUser?.displayName
-         let postRef = Firestore.firestore().collection(Const.PostPath).document()
-         let postDic = [
-         "name":name!,
-         "comment":self.commentTextField.text!,
-         ] as [String:Any]
-         
-         postRef.setData(postDic)
-         postData.comment = commentTextField.text*/
+        
         if commentTextField.text != nil{
             //更新データを作成する
             var updateCommentValue: FieldValue
+            let name = Auth.auth().currentUser?.displayName
+            updateCommentValue = FieldValue.arrayUnion(["\(name!):\(commentTextField.text!)"])
             
-            updateCommentValue = FieldValue.arrayUnion([commentTextField.text])
-            print("aaaaa")
-            print(commentTextField.text)
-            
-            print(updateCommentValue)
             let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
             postRef.updateData(["comment": updateCommentValue])
             //現状、postDicにはコメントデータが入っているが、postDataには入っていない。
-            print(postData.comment)
             
             self.dismiss(animated: true, completion: nil)
             //let homeViewController = self.storyboard?.instantiateViewController(withIdentifier: "Home")

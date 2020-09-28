@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 
 class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDelegate {
-
+    
     @IBOutlet weak var tableView: UITableView!
     
     //投稿データを格納する配列
@@ -28,7 +28,7 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
         //カスタムセルを登録する
         let nib = UINib(nibName: "PostTableViewCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: "Cell")
-
+        
         // Do any additional setup after loading the view.
     }
     
@@ -41,9 +41,14 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
             if listener == nil {
                 //listener未登録なら、登録してスナップショットを受信する
                 //postRefは投稿データを読み込むためのクエリ（データベースへの命令文）。「postフォルダに格納されているドキュメントを橙子日時の新しい順に取ってこい」という命令文。
+                //let postRef = Firestore.firestore().collection(Const.PostPath).document()
                 let postsRef = Firestore.firestore().collection(Const.PostPath).order(by: "date", descending: true)
+                
+                
                 //引数でquerySnapshotとerrorを与え（戻り値なし）errorに値があれば、if文実行なければ、抜ける
+                //listennerがnilならpostRefで設定したクエリの順番で読み込みを開始。
                 listener = postsRef.addSnapshotListener(){
+                    //読み込んだ最新のデータはquerySnapshotに格納され、そのdocumentプロパティにドキュメントの一覧が配列の形で入る
                     (querySnapshot,error) in
                     if let error = error{
                         print("DEBUG_PRINT: snapshotの取得が失敗しました。\(error)")
@@ -59,6 +64,8 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
                     //TableViewの表示を更新する
                     self.tableView.reloadData()
                 }
+                
+                
             }
         } else {
             //ログイン未(またはログアウト済み)
@@ -84,6 +91,8 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
         //セル内のボタンのアクションをソースコードで設定する
         cell.likeButton.addTarget(self, action: #selector(handleButton(_:forEvent:)), for: .touchUpInside)
         
+        cell.commentButton.addTarget(self, action: #selector(handleCommentButton(_:forEvent:)), for: .touchUpInside)
+        
         return cell
     }
     
@@ -95,6 +104,7 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
         let point = touch!.location(in: self.tableView)
         let indePath = tableView.indexPathForRow(at: point)
         
+        
         //配列からタップされたインデックスのデータを取り出す
         let postData = postArray[indePath!.row]
         
@@ -102,6 +112,8 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
         if let myid = Auth.auth().currentUser?.uid{
             //更新データを作成する
             var updateValue: FieldValue
+            
+            
             if postData.isLiked{
                 //すでにいいねをしている場合は、いいね解除のためにmyidを取り除く更新データを作成
                 updateValue = FieldValue.arrayRemove([myid])
@@ -109,22 +121,42 @@ class HomeViewController: UIViewController,UITableViewDataSource,UITableViewDele
                 //今回新たにいいねを押した場合は、myidを追加する更新データを作成
                 updateValue = FieldValue.arrayUnion([myid])
             }
+            
             //likesに更新データを書き込む
             let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
             postRef.updateData(["likes": updateValue])
+           
         }
         
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @objc func handleCommentButton(_ sender: UIButton, forEvent event: UIEvent){
+        let touch = event.allTouches?.first
+        let point = touch!.location(in: self.tableView)
+        let indePath = tableView.indexPathForRow(at: point)
+        
+        //print(indePath)
+        //配列からタップされたインデックスのデータを取り出す
+        let postData = postArray[indePath!.row]
+        // comment.captionLabel.text = "\(postData.name!):\(postData.caption!)"
+        let commentViewController = self.storyboard?.instantiateViewController(identifier: "Comment") as! CommentViewController
+        commentViewController.postData = postData
+        
+        
+        
+        //print(commentViewController.indexPath)
+        self.present(commentViewController, animated: true, completion: nil)
     }
-    */
-
+    
+    
+    /*
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

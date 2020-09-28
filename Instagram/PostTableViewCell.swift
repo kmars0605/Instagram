@@ -15,15 +15,20 @@ class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var likeLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var captionLabel: UILabel!
+    @IBOutlet weak var commentButton: UIButton!
+    @IBOutlet weak var commentLabel: UILabel!
+    @IBAction func commentButton(_ sender: Any) {
+        
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
     
@@ -36,7 +41,16 @@ class PostTableViewCell: UITableViewCell {
         
         //キャプションの表示
         self.captionLabel.text = "\(postData.name!)　:　\(postData.caption!)"
-       
+        
+        
+        
+        for i in postData.comment {
+            self.commentLabel.text = "\(postData.name!)　:　\(postData.comment)\n"
+        }
+        
+        
+        
+        
         //日時の表示
         self.dateLabel.text = ""
         if let date = postData.date{
@@ -49,6 +63,7 @@ class PostTableViewCell: UITableViewCell {
         //いいねの数の表示
         let likeNumber = postData.likes.count
         likeLabel.text  = "\(likeNumber)"
+        
         
         //いいねボタンの表示
         if postData.isLiked{

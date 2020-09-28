@@ -41,6 +41,7 @@ class PostViewController: UIViewController {
         }
         //FireStoreに投稿データを保存する
         let name = Auth.auth().currentUser?.displayName
+        let commentViewController = CommentViewController()
             //nameなどをキーに設定
         let postDic = [
             "name":name!,
